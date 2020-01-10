@@ -1,0 +1,32 @@
+name: Ruby
+
+on: [push]
+
+jobs:
+  build:
+    name: Building on ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-16.04]
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Set up Ruby 2.6
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: 2.6
+
+    - name: Set up bundler
+      run: gem install bundler
+
+    - name: Install dependencies specified in the Gemfile
+      run: bundle install --jobs 4 --retry 3
+
+    - name: Linting, lint warning checks
+      run: rubocop -l
+      continue-on-error: true
+
+    # Next steps
+    # bundle exec rake

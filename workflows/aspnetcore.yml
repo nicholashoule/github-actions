@@ -1,0 +1,26 @@
+name: ASP.NET Core CI
+
+on: [push]
+
+jobs:
+  build:
+    name: Building on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-16.04]
+        dotnet: [ '2.2.402', '3.1.100' ]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Setup .NET Core ${{ matrix.dotnet }}
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ matrix.dotnet }}
+
+      - name: Build .NET Project
+        run: |
+          cd project/app
+          dotnet build --configuration Release
+

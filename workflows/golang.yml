@@ -1,0 +1,43 @@
+name: Go
+
+on: [push]
+env:
+  TEMP_PATH: /home/runner/work/app/temp
+  BUILD_PATH: /home/runner/go/src/github.com/namespace/app
+
+jobs:
+  build:
+    name: Building on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-18.04, ubuntu-16.04]
+        goV: [1.11, 1.12, 1.13]
+
+    steps:
+    - name: Set up Go ${{ matrix.goV }}
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.goV }}
+      id: go
+
+    - name: Checking out code
+      uses: actions/checkout@v1
+
+    - name: Setup build paths
+      run: |
+        mkdir -p ${BUILD_PATH}
+        cp -R ${TEMP_PATH}/cmd ${BUILD_PATH}
+        cp -R ${TEMP_PATH}/pkg ${BUILD_PATH}
+        cp -R ${TEMP_PATH}/internal ${BUILD_PATH}
+
+    - name: Get dependencies
+      run: |
+        cd ${BUILD_PATH}/cmd/app
+        go get -v -t -d
+
+    - name: Build
+      run: |
+        cd ${BUILD_PATH}/cmd/app
+        go build -ldflags="-s -w" -v .
+
