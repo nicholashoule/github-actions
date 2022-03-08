@@ -11,8 +11,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-16.04]
-        goV: [1.11, 1.12, 1.13]
+        os: [ubuntu-20.04, ubuntu-18.04]
+        goV: [1.15, 1.16, 1.17]
 
     steps:
     - name: Set up Go ${{ matrix.goV }}
